@@ -94,7 +94,11 @@ class PlayerComponent extends BodyComponent implements ContactListener {
   }
 
   void jump() {
+    print('jumpinh');
+    print('jumpinh2');
+    print(body.linearVelocity);
     if (body.linearVelocity.y.abs() <= 0.01) {
+      body.linearVelocity.y = 0;
       jumping = true;
       body.applyForceToCenter(
           Vector2(0, viewport.size.height / 8)..scale(10000));
@@ -102,13 +106,13 @@ class PlayerComponent extends BodyComponent implements ContactListener {
   }
 
   void interruptJump() {
-    if (body.linearVelocity.y > 0) {
-      body.applyLinearImpulse(
-          Vector2(0, body.linearVelocity.y)
-            ..scale(-15 * viewport.size.height / 600.0),
-          center,
-          true);
-    }
+    // if (body.linearVelocity.y > 0) {
+      // body.applyLinearImpulse(
+      //     Vector2(0, body.linearVelocity.y)
+      //       ..scale(-15 * viewport.size.height / 600.0),
+      //     center,
+      //     true);
+    // }
   }
 
   void _solveObstacleContact(ObstacleBody obstacleBody) {

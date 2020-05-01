@@ -11,7 +11,6 @@ class HealthDisplay extends Component {
 
   bool first = true;
 
-  int priority() => 100;
 
   HealthDisplay(this.world) {
     currentHealthRect = Rect.fromLTWH(0, 0, world.viewport.size.width, 20);

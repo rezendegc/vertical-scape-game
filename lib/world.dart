@@ -13,10 +13,7 @@ class VulcanWorld extends Box2DComponent {
   Function(String) navigate;
   bool pause = false;
 
-  @override
-  int priority() => 0;
-
-  VulcanWorld(this.navigate) : super(gravity: -60);
+  VulcanWorld(this.navigate) : super(gravity: -100);
 
   void initializeWorld() {
     player = PlayerComponent(this);

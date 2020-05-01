@@ -11,9 +11,6 @@ class WinZoneBody extends BodyComponent {
 
   bool first = true;
 
-  @override
-  int priority() => 0;
-
   WinZoneBody(Box2DComponent box, this.alignment, Offset offset, { this.showHelperText }) : super(box) {
     _createBody(offset);
 
@@ -34,7 +31,7 @@ class WinZoneBody extends BodyComponent {
 
   void renderPolygon(Canvas canvas, List<Offset> points) {
     canvas.drawRect(Rect.fromPoints(points.elementAt(0), points.elementAt(2)),
-        Paint()..color = Colors.greenAccent.withOpacity(1));
+        Paint()..color = Colors.greenAccent.withOpacity(0.3));
 
     if (showHelperText == true) {
       textPainter.paint(

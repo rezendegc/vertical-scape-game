@@ -23,7 +23,6 @@ class LavaGame extends Box2DGame with TapDetector {
     final size = await Flame.util.initialDimensions();
     resize(size);
     world.initializeWorld();
-    // add(world);
     add(ScoreDisplay(world));
     add(HealthDisplay(world));
   }
