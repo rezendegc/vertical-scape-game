@@ -38,7 +38,7 @@ class PlayerComponent extends BodyComponent implements ContactListener {
     height = viewport.size.height * 0.05;
 
     double x = 0;
-    double y = -viewport.size.height / 2 + height * 3;
+    double y = -viewport.size.height / 2 + height * 8; // change this to height*3 to make it dont stop on start fall
 
     final shape = new PolygonShape();
     shape.setAsBoxXY(width / 2, height / 2);
