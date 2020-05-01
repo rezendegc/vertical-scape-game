@@ -10,6 +10,8 @@ class ScoreDisplay extends Component {
   TextStyle textStyle;
   Offset position;
 
+  int priority() => 5;
+
   ScoreDisplay(this.game) {
     painter = TextPainter(
       textAlign: TextAlign.center,

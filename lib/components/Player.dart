@@ -4,7 +4,6 @@ import 'package:flame/box2d/box2d_component.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:lava_scape/components/Coin.dart';
 import 'package:lava_scape/components/Obstacle.dart';
 import 'package:lava_scape/world.dart';
 
@@ -16,10 +15,6 @@ class PlayerComponent extends BodyComponent implements ContactListener {
   double height = 0;
   double width = 0;
   bool forward = false;
-  bool onAir = false;
-  bool jumping = false;
-  double maxHealth = 100;
-  double currentHealth = 100;
 
   PlayerComponent(this.myWorld) : super(myWorld) {
     _createBody();
@@ -28,31 +23,9 @@ class PlayerComponent extends BodyComponent implements ContactListener {
   @override
   void update(double dt) {
     forward = body.linearVelocity.x >= 0.0;
-    onAir = body.linearVelocity.y.abs() >= 0.001;
-    final maxCameraDistance = viewport.size.height * 0.1 + height / 2;
-    final cameraDistance =
-        viewport.size.height - viewport.getWorldToScreen(body.worldCenter).y;
-    final difference = maxCameraDistance - cameraDistance;
 
-    body.linearVelocity = Vector2(myWorld.playerSpeed * (forward ? 1 : -1), body.linearVelocity.y);
-
-    // moves camera to player when it reaches new platform
-    if (difference > 0.4) {
-      double step = -50 * dt;
-      if (step.abs() > cameraDistance.abs()) step = -cameraDistance.abs();
-      myWorld.translateCamera(0, step);
-    } else if (difference < -0.4 && !onAir && !jumping) {
-      double step = 50 * dt;
-      if (step.abs() > cameraDistance.abs()) step = cameraDistance.abs();
-      myWorld.translateCamera(0, step);
-    }
-
-    // for now it will lose health on time
-    // currentHealth -= dt * 5;
-    if (currentHealth < 0) {
-      currentHealth = 0;
-      myWorld.loseGame();
-    }
+    /* this line was added to prevent player from stop from falls/jumps */
+    // body.linearVelocity = Vector2(myWorld.playerSpeed * (forward ? 1 : -1), body.linearVelocity.y);
   }
 
   void renderPolygon(Canvas canvas, List<Offset> points) {
@@ -94,25 +67,10 @@ class PlayerComponent extends BodyComponent implements ContactListener {
   }
 
   void jump() {
-    print('jumpinh');
-    print('jumpinh2');
-    print(body.linearVelocity);
     if (body.linearVelocity.y.abs() <= 0.01) {
-      body.linearVelocity.y = 0;
-      jumping = true;
-      body.applyForceToCenter(
-          Vector2(0, viewport.size.height / 8)..scale(10000));
+      body.linearVelocity.y = 0; // this line doesn't made any difference, can commit it
+      body.applyForceToCenter(Vector2(0, 200)..scale(10000));
     }
-  }
-
-  void interruptJump() {
-    // if (body.linearVelocity.y > 0) {
-      // body.applyLinearImpulse(
-      //     Vector2(0, body.linearVelocity.y)
-      //       ..scale(-15 * viewport.size.height / 600.0),
-      //     center,
-      //     true);
-    // }
   }
 
   void _solveObstacleContact(ObstacleBody obstacleBody) {
@@ -129,18 +87,17 @@ class PlayerComponent extends BodyComponent implements ContactListener {
     final playerLeft = (body.worldCenter.x - width / 2);
     final playerRight = (body.worldCenter.x + width / 2);
 
+    // this solves from where the collision came from..
+    // obviously not 100%, but should work for my purposes
     if ((playerBottom - obstacleTop).abs() < DISTANCE_TO_EDGE) {         // bottom
-      jumping = false;
-    } else if ((playerTop - obstacleBottom).abs() < DISTANCE_TO_EDGE) {  // top
-    } else if ((playerLeft - obstacleRight).abs() < DISTANCE_TO_EDGE) {  // left
-    } else if ((playerRight - obstacleLeft).abs() < DISTANCE_TO_EDGE) {  // right
     }
-  }
-
-  void _solveCoinContact(CoinBody coinBody) {
-    if (coinBody.shouldDestroy != true) {
-      myWorld.score++;
-      coinBody.shouldDestroy = true;
+    if ((playerTop - obstacleBottom).abs() < DISTANCE_TO_EDGE) {  // top
+    }
+    if ((playerLeft - obstacleRight).abs() < DISTANCE_TO_EDGE) {  // left
+      body.linearVelocity.x *= -1;
+    }
+    if ((playerRight - obstacleLeft).abs() < DISTANCE_TO_EDGE) {  // right
+      body.linearVelocity.x *= -1;
     }
   }
 
@@ -151,10 +108,6 @@ class PlayerComponent extends BodyComponent implements ContactListener {
 
     if (fixture.userData == 'obstacle') {
       _solveObstacleContact(fixture.getBody().userData);
-    } else if (fixture.userData == 'coin') {
-      _solveCoinContact(fixture.getBody().userData);
-    } else if (fixture.userData == 'winZone') {
-      myWorld.winGame();
     }
   }
 

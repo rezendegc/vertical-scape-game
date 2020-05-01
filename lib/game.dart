@@ -4,8 +4,6 @@ import 'package:flame/flame.dart';
 import 'package:flame/gestures.dart';
 import 'package:flame/text_config.dart';
 import 'package:flutter/material.dart';
-import 'package:lava_scape/components/Health.dart';
-import 'package:lava_scape/components/Player.dart';
 import 'package:lava_scape/components/Score.dart';
 import 'package:lava_scape/world.dart';
 
@@ -13,7 +11,6 @@ TextConfig regular = TextConfig(color: Colors.white);
 
 class LavaGame extends Box2DGame with TapDetector {
   VulcanWorld world;
-  PlayerComponent player;
 
   LavaGame(this.world) : super(world) {
     initialize();
@@ -24,7 +21,6 @@ class LavaGame extends Box2DGame with TapDetector {
     resize(size);
     world.initializeWorld();
     add(ScoreDisplay(world));
-    add(HealthDisplay(world));
   }
 
   void resize(Size size) {
@@ -34,13 +30,5 @@ class LavaGame extends Box2DGame with TapDetector {
 
   void onTapDown(TapDownDetails details) {
     world.handleTap();
-  }
-
-  void onTapUp(TapUpDetails details) {
-    world.handleFinishTap();
-  }
-
-  void onTapCancel() {
-    world.handleFinishTap();
   }
 }
