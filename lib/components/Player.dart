@@ -68,7 +68,7 @@ class PlayerComponent extends BodyComponent implements ContactListener {
 
   void jump() {
     if (body.linearVelocity.y.abs() <= 0.01) {
-      body.linearVelocity.y = 0; // this line doesn't made any difference, can commit it
+      body.linearVelocity.y = 0; // this line doesn't made any difference, can comment it
       body.applyForceToCenter(Vector2(0, 200)..scale(10000));
     }
   }
