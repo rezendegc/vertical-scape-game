@@ -8,7 +8,7 @@ class VulcanWorld extends Box2DComponent {
   PlayerComponent player;
   bool initialized = false;
   int score = 0;
-  double playerSpeed = 50;
+  double playerSpeed = 100;
   Offset _cameraOffset;
   Function(String) navigate;
   bool pause = false;

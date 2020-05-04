@@ -16,7 +16,7 @@ class PlayerComponent extends BodyComponent implements ContactListener {
   double height = 0;
   double width = 0;
   bool forward = false;
-  bool onAir = false;
+  bool onAir = true;
   bool jumping = false;
   double maxHealth = 100;
   double currentHealth = 100;
@@ -28,13 +28,11 @@ class PlayerComponent extends BodyComponent implements ContactListener {
   @override
   void update(double dt) {
     forward = body.linearVelocity.x >= 0.0;
-    onAir = body.linearVelocity.y.abs() >= 0.001;
     final maxCameraDistance = viewport.size.height * 0.1 + height / 2;
     final cameraDistance =
         viewport.size.height - viewport.getWorldToScreen(body.worldCenter).y;
     final difference = maxCameraDistance - cameraDistance;
-
-    body.linearVelocity = Vector2(myWorld.playerSpeed * (forward ? 1 : -1), body.linearVelocity.y);
+    // body.setTransform(Vector2(, 0), 0);
 
     // moves camera to player when it reaches new platform
     if (difference > 0.4) {
@@ -73,13 +71,13 @@ class PlayerComponent extends BodyComponent implements ContactListener {
     final activeFixtureDef = FixtureDef();
     activeFixtureDef.shape = shape;
     activeFixtureDef.restitution = 0.0;
-    activeFixtureDef.density = 0.05;
+    activeFixtureDef.density = 1;
     activeFixtureDef.friction = 0.0;
     activeFixtureDef.userData = 'player';
     FixtureDef fixtureDef = activeFixtureDef;
 
     final activeBodyDef = BodyDef();
-    activeBodyDef.linearVelocity = Vector2(myWorld.playerSpeed, 0);
+    activeBodyDef.linearVelocity = Vector2(0, 0);
     activeBodyDef.position = Vector2(x, y);
     activeBodyDef.type = BodyType.DYNAMIC;
     activeBodyDef.active = true;
@@ -94,14 +92,9 @@ class PlayerComponent extends BodyComponent implements ContactListener {
   }
 
   void jump() {
-    print('jumpinh');
-    print('jumpinh2');
-    print(body.linearVelocity);
     if (body.linearVelocity.y.abs() <= 0.01) {
-      body.linearVelocity.y = 0;
+      body.applyForceToCenter(Vector2(myWorld.playerSpeed, viewport.size.height * 50)..scale(100));
       jumping = true;
-      body.applyForceToCenter(
-          Vector2(0, viewport.size.height / 8)..scale(10000));
     }
   }
 
@@ -131,9 +124,20 @@ class PlayerComponent extends BodyComponent implements ContactListener {
 
     if ((playerBottom - obstacleTop).abs() < DISTANCE_TO_EDGE) {         // bottom
       jumping = false;
-    } else if ((playerTop - obstacleBottom).abs() < DISTANCE_TO_EDGE) {  // top
-    } else if ((playerLeft - obstacleRight).abs() < DISTANCE_TO_EDGE) {  // left
-    } else if ((playerRight - obstacleLeft).abs() < DISTANCE_TO_EDGE) {  // right
+      onAir = false;
+    } else {
+      onAir = true;
+    }
+
+    if ((playerTop - obstacleBottom).abs() < DISTANCE_TO_EDGE) {  // top
+    } 
+    
+    if ((playerLeft - obstacleRight).abs() < DISTANCE_TO_EDGE) {  // left
+      body.linearVelocity.x *= -1;
+    } 
+    
+    if ((playerRight - obstacleLeft).abs() < DISTANCE_TO_EDGE) {  // right
+      body.linearVelocity.x *= -1;
     }
   }
 

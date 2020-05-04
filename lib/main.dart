@@ -27,10 +27,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routes: {
-        '/': (context) => Home(),
+        '/home': (context) => Home(),
         '/lost': (context) => LostScreen(),
         '/won': (context) => WonScreen(),
-        '/play': (context) {
+        '/': (context) {
           VulcanWorld world = VulcanWorld((String name) => Navigator.of(context).pushReplacementNamed(name));
           LavaGame game = LavaGame(world);
           return game.widget;
